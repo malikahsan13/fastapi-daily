@@ -42,3 +42,17 @@ async def create_item(item: Item, db=Depends(get_db)):
         # item.id = cur.lastrowid
         await db.commit()
     return item
+
+
+@app.put("/items/{item_id}")
+async def update_item(item_id: int, item: Item, db=Depends(get_db)):
+    async with db.cursor() as cur:
+
+        await cur.execute("SELECT id FROM test_items WHERE id=%s", (item_id))
+        row = await cur.fetchone()
+        if row:
+            await cur.execute("UPDATE test_items SET name=%s, price=%s WHERE id=%s", (item.name, item.price, item_id))
+            await db.commit()
+        else:
+            return {"message": "test item not updated"}
+    return item
