@@ -7,7 +7,6 @@ app = FastAPI()
 
 
 class Item(BaseModel):
-    id: int
     name: str
     price: float
 
@@ -33,3 +32,13 @@ async def get_items(db=Depends(get_db)):
             item = Item(id=row[0], name=row[1], price=row[2])
             items.append(item)
         return items
+
+
+@app.post("/items/", response_model=Item)
+async def create_item(item: Item, db=Depends(get_db)):
+    async with db.cursor() as cur:
+        await cur.execute("INSERT INTO test_items (name, price) VALUES(%s ,%s)",
+                          (item.name, item.price))
+        # item.id = cur.lastrowid
+        await db.commit()
+    return item
