@@ -56,3 +56,11 @@ async def update_item(item_id: int, item: Item, db=Depends(get_db)):
         else:
             return {"message": "test item not updated"}
     return item
+
+
+@app.delete("/items/{item_id}")
+async def delete_item(item_id: int, db=Depends(get_db)):
+    async with db.cursor() as cur:
+        await cur.execute("DELETE FROM test_items WHERE id=%s", (item_id))
+        await db.commit()
+    return {"message": "Item deleted successfully"}
