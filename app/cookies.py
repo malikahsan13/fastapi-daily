@@ -9,5 +9,5 @@ async def set_cookie(response: Response):
 
 @app.get("/get_cookie/")
 async def get_cookie(request: Request):
-    cookie_value = request.get("cookie_key")
+    cookie_value = request.cookies.get("cookie_key")
     return {"Cookie value": cookie_value}
