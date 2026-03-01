@@ -22,5 +22,6 @@ async def upload_image(file: UploadFile = File(...), path: Optional[str] = None)
     blob = bucket.blob(path)
     blob.upload_from_string(await file.read(), content_type=file.content_type)
 
-    url = blob.generate_signed_url()
+    # url = blob.generate_signed_url()
+    url = blob.public_url()
     return {"url": url}
