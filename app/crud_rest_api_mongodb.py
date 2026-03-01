@@ -27,3 +27,9 @@ def insert_user(user_data: User):
     user_dict = user_data.dict()
     result = users_collection.insert_one(user_dict)
     return result.inserted_id
+
+
+@app.post("/users/")
+async def create_user(user_data: User):
+    user_id = insert_user(user_data)
+    return user_id
