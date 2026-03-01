@@ -65,3 +65,13 @@ async def update_user(user_data: User, user_id: str = Path(...), db: MongoClient
         return {"message": "User updated successfully"}
     else:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@app.delete("/user/{user_id}")
+async def delete_user(user_id: str = Path(...), db: MongoClient = Depends(get_current_database)):
+    user_object_id = ObjectId(user_id)
+    result = users_collection.delete_one({"_id": user_object_id})
+    if result.deleted_count == 1:
+        return {"message": "User deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
