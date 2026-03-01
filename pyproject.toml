@@ -23,6 +23,8 @@ dependencies = [
     "ecdsa==0.19.1",
     "executing==2.2.1",
     "fastapi==0.115.12",
+    "firebase>=4.0.1",
+    "firebase-admin>=7.2.0",
     "greenlet==3.2.3",
     "h11==0.16.0",
     "idna==3.10",
