@@ -3,10 +3,10 @@ import boto3
 
 app = FastAPI()
 
-AWS_ACCESS_KEY_ID =
-AWS_SECRET_ACCESS_KEY =
-AWS_REGEION_NAME =
-S3_BUCKET_NAME =
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY = ""
+AWS_REGEION_NAME = ""
+S3_BUCKET_NAME = ""
 
 
 @app.post("/upload/")
@@ -26,7 +26,7 @@ async def upload_image(file: UploadFile = File(...)):
         )
 
         image_url = f"https://{S3_BUCKET_NAME}.s3.{AWS_REGEION_NAME}.amazonaws.com/{file.filename}"
-
+        # return object url from s3 bucket this will not work
         return {"url": image_url}
     except Exception as e:
         return {"error": str(e)}
