@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Path, HTTPException
 from pydantic import BaseModel
 from bson import ObjectId
 
@@ -24,7 +24,7 @@ async def get_current_database():
 
 
 def insert_user(user_data: User):
-    user_dict = user_data.dict()
+    user_dict = user_data.model_dump()
     result = users_collection.insert_one(user_dict)
     return result.inserted_id
 
@@ -43,3 +43,25 @@ async def get_all_users(db: MongoClient = Depends(get_current_database)):
         user['_id'] = str(user['_id'])
         user_list.append(user)
     return user_list
+
+
+@app.get("/users/{user_id}")
+async def get_user(user_id: str = Path(...), db: MongoClient = Depends(get_current_database)):
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if user:
+        user['_id'] = str(user['_id'])
+        return user
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+
+
+@app.put("/user/{user_id}")
+async def update_user(user_data: User, user_id: str = Path(...), db: MongoClient = Depends(get_current_database)):
+    user_dict = user_data.model_dump()
+    user_object_id = ObjectId(user_id)
+    result = users_collection.find_one(
+        {"_id": user_object_id}, {"$set": user_dict})
+    if result.modified_count == 1:
+        return {"message": "User updated successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
