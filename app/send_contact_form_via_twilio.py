@@ -14,8 +14,8 @@ async def send_whatsapp(name: str= Form(...), email: str = Form(...), message: s
     try:
         whatsapp_msg = f"New contact form submission:\nName: {name}\nEmail: {email}\nMessage:{message}"
         message = client.message.create(
-            body:whatsapp_msg,
-            form = "whatsapp:"+TWILIO_PHONE_NUMBER,
+            body=whatsapp_msg,
+            form_= "whatsapp:"+TWILIO_PHONE_NUMBER,
             to="whatsapp:"+RECIPIENT_WHATSAPP_NUMBER
         )
         return {"status":"success","message_sid":message.sid}
