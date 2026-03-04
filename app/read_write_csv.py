@@ -29,3 +29,31 @@ async def upload_csv(file: UploadFile = File(...)):
         return {"message": "CSV file uploaded successfully"}
     else:
         return {"error": "Only CSV file are allowed"}
+
+
+@app.get("/read-csv/")
+async def read_csv(file_name: str):
+    try:
+        with open(file_name, "r") as f:
+            csv_reader = csv.DictReader(f)
+            json_data = [row for row in csv_reader]
+            return json_data
+
+    except FileNotFoundError:
+        return {"error": "File not found"}
+
+
+@app.post("/write-csv/")
+async def write_csv(data: CSVRequest):
+    with open(data.filename, "a", newline="") as f:
+        fieldnames = ['id', 'name', 'email']
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+        # check if the file is empty
+        if f.tell() == 0:
+            writer.writeheader()
+
+        for item in data.data:
+            writer.writerow(item.dict())
+
+    return {"message": "JSON data appended to CSV file successfully."}
