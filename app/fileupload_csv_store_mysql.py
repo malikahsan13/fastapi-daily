@@ -24,3 +24,21 @@ app = FastAPI()
 
 
 @app.post("/upload-csv/")
+async def upload_csv(file: UploadFile = File(...)):
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(
+            status_code=400, detail="Only CSV files are allowed")
+
+    contents = await file.read()
+
+    csv_data = contents.decode("utf-8").splitlines()
+    csv_reader = csv.reader(csv_data)
+
+    db = SessionLocal()
+    for row in csv_reader:
+        item = Item(name=row[0], email=row[1])
+        db.add(item)
+    db.commit()
+    db.close()
+
+    return {"message": "CSV file uploaded and data stored in MySql"}
