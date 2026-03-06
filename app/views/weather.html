@@ -3,13 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App</title>
+    <title>Weather Info</title>
   </head>
   <body>
-    <h1>Weather App</h1>
-    <form action="/weather" method="get">
-      <input type="text" name="city" placeholder="Enter city name" />
-      <button type="submit">Search</button>
-    </form>
+    <h2>Weather Information for {{ weather_data.city }}</h2>
+    <p>Temprature: {{ weather_data.temprature }}</p>
+    <p>Weather: {{ weather_data.weather }}</p>
+    <a href="/">Back to Search</a>
   </body>
 </html>
