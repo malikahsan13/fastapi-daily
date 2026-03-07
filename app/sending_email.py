@@ -23,3 +23,22 @@ async def send_email(email_data: EmailSchema):
 
     smtp_server = smtplib.SMTP("smtp@gmail.com", 587)
     smtp_server.starttls()
+
+    try:
+        smtp_server.login(sender_email, sender_password)
+
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = recipient_email
+        message["Subject"] = subject
+
+        message.attach(MIMEText(body), "plain")
+
+        smtp_server.sendmail(sender_email, recipient_email,
+                             message.as_string())
+        smtp_server.quit()
+
+        return {"message": "Email sent successfully"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to send email:{str(e)}")
