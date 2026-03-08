@@ -38,3 +38,11 @@ def send_email(email: EmailSchema):
         print("Email sent successfully")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
+
+@app.post("/send-emails/")
+async def send_email(emails: List[EmailSchema], background_tasks: BackgroundTasks):
+    # Add send_email task to the background queue for each email
+    for email in emails:
+        background_tasks.add_task(send_email, email)
+    return {"message": "Emails will be sent in the background"}
