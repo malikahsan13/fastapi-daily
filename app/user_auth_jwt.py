@@ -10,3 +10,7 @@ from .models import Base
 from .schemas import UserOut
 
 app = FastAPI()
+
+# Create all database tables
+Base.metadata.create_all(bind=engine)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
