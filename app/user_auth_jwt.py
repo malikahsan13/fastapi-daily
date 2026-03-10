@@ -67,3 +67,17 @@ async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db))
         raise HTTPException(status_code=400, detail="Email already registered")
     user.password = pwd_context.hash(user.password)
     return crud.createuser(db=db, user=user)
+
+
+# Endpoint for user login and token generation
+@app.post("/login", response_model=schemas.Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = authticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=400, detail="Incorrect username or password")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
