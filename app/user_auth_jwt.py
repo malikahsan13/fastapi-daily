@@ -49,3 +49,21 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 # Function to authenticate user
+
+
+def authticate_user(db: Session, username: str, password: str):
+    user = crud.get_user_by_email(db, email=username)
+    if not user or not verify_password(password, user.hashed_password):
+        return False
+    return user
+
+# Endpoint for user registration
+
+
+@app.post("/register", response_model=schemas.User)
+async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    user.password = pwd_context.hash(user.password)
+    return crud.createuser(db=db, user=user)
