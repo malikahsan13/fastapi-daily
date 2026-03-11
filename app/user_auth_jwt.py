@@ -95,3 +95,23 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
+
+
+def validate_token_and_extract_user_id(token: str) -> int:
+    try:
+        print(token)
+        decoded_token = jwt.decode(
+            token, "your-secret-key", algorithms=["HS256"])
+        user_id = decoded_token.get("sub")
+        print(decoded_token)
+        return user_id
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired"
+        )
