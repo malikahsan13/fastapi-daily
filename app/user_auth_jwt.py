@@ -81,3 +81,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users/me", response_model=UserOut)
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+
+    user_id = validate_token_and_extract_user_id(token)
+    print(user_id)
+
+    user = crud.get_user_by_id(user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
