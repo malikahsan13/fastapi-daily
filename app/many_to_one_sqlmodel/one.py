@@ -44,3 +44,14 @@ def insert_dummy_data():
 
             session.add([publisher1, publisher2])
             session.commit()
+
+# @app.post("/publishers/", response_model=PublisherRead)
+# def create_publisher(*, session: Session = Depends(get_session), publisher: PublisherRead)
+
+
+@app.get("/publishers/", response_model=List[PublisherRead])
+def read_publishers(session: Session = Depends(get_session)):
+    publishers = session.exec(
+        select(Publisher).options(selectinload(Publisher.books))
+    ).all()
+    return publishers
