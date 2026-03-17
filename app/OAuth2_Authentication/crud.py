@@ -15,7 +15,7 @@ def create_user(db: Session, user: UserCreate):
     db.refresh(db_user)
     return db_user
     
-def get_user_by_username(session: Session, username: str):
+def get_user_by_username(session: Session, username):
     statement = select(User).where(User.username == username)
     return session.exec(statement).first()
 
